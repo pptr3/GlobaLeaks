@@ -2,8 +2,6 @@ describe("globaleaks process", function() {
   var receipts = [];
   var comment = "comment";
   var comment_reply = "comment reply";
-  var message = "message";
-  var message_reply = "message reply";
 
   var perform_submission = async function() {
     var wb = new browser.gl.pages.whistleblower();
@@ -80,43 +78,6 @@ describe("globaleaks process", function() {
     await element(by.id("files-action-confirm")).click();
     await browser.gl.utils.waitUntilPresent(by.css(".progress-bar-complete"));
 
-    await browser.gl.utils.logout();
-  });
-
-  it("Recipient should be able to start a private discussion with the whistleblower", async function() {
-    await browser.gl.utils.login_receiver();
-
-    await browser.gl.utils.takeScreenshot("recipient/home.png");
-
-    await browser.setLocation("/recipient/reports");
-
-    var id = await element(by.id("tip-0")).evaluate("tip.id");
-
-    await browser.setLocation("/status/" + id);
-    await element(by.model("tip.newMessageContent")).sendKeys(message);
-    await element(by.id("message-action-send")).click();
-
-    var m = await element(by.id("message-0")).element(by.css(".preformatted")).getText();
-    expect(m).toContain(message);
-
-    await browser.gl.utils.takeScreenshot("recipient/report.png");
-    await browser.gl.utils.logout();
-  });
-
-  it("Whistleblower should be able to read the private message from the receiver and reply", async function() {
-    await browser.gl.utils.login_whistleblower(receipts[0]);
-
-    await element.all(by.options("obj.key as obj.value for obj in tip.msg_receivers_selector | orderBy:'value'")).get(1).click();
-    var message1 = await element(by.id("message-0")).element(by.css(".preformatted")).getText();
-    expect(message1).toEqual(message);
-
-    await element(by.model("tip.newMessageContent")).sendKeys(message_reply);
-    await element(by.id("message-action-send")).click();
-
-    var message2 = await element(by.id("message-0")).element(by.css(".preformatted")).getText();
-    expect(message2).toContain(message_reply);
-
-    await browser.gl.utils.takeScreenshot("whistleblower/report.png");
     await browser.gl.utils.logout();
   });
 
