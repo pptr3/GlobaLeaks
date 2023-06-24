@@ -114,11 +114,16 @@ class SNIMap(object):
 
     def load(self, tid, conf):
         chnv = ChainValidator()
-        ok, err = chnv.validate(conf, must_be_disabled=False, check_expiration=False)
+        ok, err = chnv.validate(conf, check_expiration=False)
         if not ok or err is not None:
+            print('err')
+            print(err)
             return
 
         self.configs_by_tid[tid] = conf
+        print('hostname')
+        print(conf)
+        print(conf['hostname'])
 
         context = TLSServerContextFactory(conf['ssl_key'],
                                           conf['ssl_cert'],
@@ -138,10 +143,15 @@ class SNIMap(object):
             self.set_default_context(new_tls_server_context())
 
     def selectContext(self, connection):
+        print('aaaa')
         try:
             common_name = connection.get_servername().decode()
-        except:
-            common_name = ''
+        except Exception as e:
+            print(e)
+            common_name = '127.0.0.1'
+
+        print(common_name)
+        print(self.contexts_by_hostname)
 
         if common_name in self.contexts_by_hostname:
             context = self.contexts_by_hostname[common_name].getContext()

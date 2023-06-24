@@ -26,13 +26,24 @@ def db_load_tls_config(session, tid):
     """
     node = ConfigFactory(session, tid)
 
+    if node.get_val('https_enabled'):
+        key = node.get_val('https_key')
+        cert = node.get_val('https_cert')
+        chain = node.get_val('https_chain')
+        hostname = node.get_val('hostname')
+    else:
+        key = node.get_val('https_selfsigned_key')
+        cert = node.get_val('https_selfsigned_cert')
+        chain = ''
+        hostname = '127.0.0.1'
+
     return {
         'tid': tid,
-        'ssl_key': node.get_val('https_key'),
-        'ssl_cert': node.get_val('https_cert'),
-        'ssl_intermediate': node.get_val('https_chain'),
+        'ssl_key': key,
+        'ssl_cert': cert,
+        'ssl_intermediate': chain,
         'https_enabled': node.get_val('https_enabled'),
-        'hostname': node.get_val('hostname'),
+        'hostname': hostname
     }
 
 
