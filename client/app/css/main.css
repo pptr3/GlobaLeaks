@@ -925,3 +925,11 @@ html[dir="ltr"] #Receipt {
 [dir] .navbar {
   padding: 0;
 }
+.edit {
+  color: #b4bccb !important
+}
+
+.edited {
+  opacity: 0.25;
+  font-size: 12px;
+}
