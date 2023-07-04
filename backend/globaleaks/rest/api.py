@@ -95,7 +95,9 @@ api_spec = [
     (r'/api/rtips/' + uuid_regexp + r'/wbfile', rtip.WhistleblowerFileHandler),
     (r'/api/rfile/' + uuid_regexp, rtip.ReceiverFileDownload),
     (r'/api/wbfile/' + uuid_regexp, rtip.RTipWBFileHandler),
-
+    (r'/api/rtips/' + uuid_regexp + r'/masking/'+ uuid_regexp, rtip.RTipMaskingCollection),
+    (r'/api/rtips/' + uuid_regexp + r'/masking', rtip.RTipMaskingCollection),
+    
     # Whistleblower Tip Handlers
     (r'/api/wbtip', wbtip.WBTipInstance),
     (r'/api/wbtip/comments', wbtip.WBTipCommentCollection),
