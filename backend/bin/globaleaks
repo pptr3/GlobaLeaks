@@ -67,6 +67,10 @@ parser.add_option("-w", "--working-path", type="string",
     help="set the backend working directory",
     dest="working_path", default=None)
 
+parser.add_option("-p", "--db-path", type="string",
+    help="set the database directory",
+    dest="db_path", default=None)
+
 parser.add_option("-d", "--disable-csp", action='store_true',
     help="disable content security policy",
     dest="disable_csp", default=False)
