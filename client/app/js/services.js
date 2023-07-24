@@ -358,9 +358,10 @@ factory("RTip", ["$rootScope", "$http", "RTipResource", "RTipCommentResource",
       tip.questionnaire = $rootScope.questionnaires_by_id[tip.context.questionnaire_id];
       tip.additional_questionnaire = $rootScope.questionnaires_by_id[tip.context.additional_questionnaire_id];
 
-      tip.newComment = function(content) {
+      tip.newComment = function(content,visibility) {
         var c = new RTipCommentResource(tipID);
         c.content = content;
+        c.visibility = visibility;
         c.$save(function(newComment) {
           tip.comments.unshift(newComment);
           tip.localChange();
@@ -426,9 +427,10 @@ factory("WBTip", ["$rootScope", "WBTipResource", "WBTipCommentResource",
         }
       });
 
-      tip.newComment = function(content) {
+      tip.newComment = function(content,visibility) {
         var c = new WBTipCommentResource();
         c.content = content;
+        c.visibility = visibility;
         c.$save(function(newComment) {
           tip.comments.unshift(newComment);
           tip.localChange();
@@ -641,6 +643,7 @@ factory("AdminUtils", ["AdminContextResource", "AdminQuestionnaireResource", "Ad
       user.can_grant_access_to_reports = false;
       user.can_delete_submission = false;
       user.can_postpone_expiration = true;
+      user.can_transfer_access_to_reports = false;
       return user;
     },
 

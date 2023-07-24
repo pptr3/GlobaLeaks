@@ -8,7 +8,7 @@ __author__ = 'GlobaLeaks'
 __email__ = 'info@globaleaks.org'
 __copyright__ = '2011-2023 - GlobaLeaks'
 __version__ = '4.11.5'
-__license__ = 'AGPL-3.0'
+__license__ = 'AGPL-4.0'
 
 DATABASE_VERSION = 65
 FIRST_DATABASE_VERSION_SUPPORTED = 30

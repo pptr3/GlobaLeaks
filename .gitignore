@@ -1,0 +1,7 @@
+client/node_modules/*
+backend/env/*
+backend/workingdir/*
+client/app/lib/*
+client/app/license.txt
+client/app/viewer/pdf.min.js
+client/app/viewer/pdf.worker.min.js

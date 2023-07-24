@@ -221,6 +221,7 @@ class MigrationScript(MigrationBase):
             self.session_new.add(new_obj)
 
     def migrate_ReceiverFile(self):
+        self.entries_count['ReceiverFile'] = 0
         for old_obj, old_ifile in self.session_old.query(self.model_from['ReceiverFile'], self.model_from['InternalFile']) \
                                                   .filter(self.model_from['ReceiverFile'].internalfile_id == self.model_from['InternalFile'].id):
             new_obj = self.model_to['ReceiverFile']()
@@ -237,6 +238,7 @@ class MigrationScript(MigrationBase):
                     setattr(new_obj, key, getattr(old_obj, key))
 
             self.session_new.add(new_obj)
+            self.entries_count['ReceiverFile'] += 1
 
     def migrate_WhistleblowerFile(self):
         for old_obj, r in self.session_old.query(self.model_from['WhistleblowerFile'], self.model_from['ReceiverTip']) \

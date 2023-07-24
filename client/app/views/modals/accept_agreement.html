@@ -1,0 +1,19 @@
+<div class="modal-header">
+    <div class="modal-title" data-translate>Privacy Policy</div>
+</div>
+<div class="modal-body">
+    <div>
+        <div class="tos-text"><span data-ng-include src="'/s/user_privacy_policy.txt'"></span></div>
+        <a href="/s/user_privacy_policy.pdf" target="_blank" data-translate>Download copy of the Privacy Policy</a>
+        <div class="form-check">
+            <input name="tos2" class="form-check-input" type="checkbox" data-ng-model="aAgrementModel" required />
+            <label class="form-check-label" data-translate>I've read and accept the Privacy Policy</label>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button id="modal-action-ok" class="btn btn-primary" data-ng-disabled="!aAgrementModel" data-ng-click="confirm()">
+        <i class="fa-solid fa-check"></i>
+        <span data-translate>Confirm</span>
+    </button>
+</div>
