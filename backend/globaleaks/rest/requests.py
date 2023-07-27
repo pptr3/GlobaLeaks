@@ -49,6 +49,7 @@ field_type_regexp = (r'^('
                      'email|'
                      'date|'
                      'daterange|'
+                     'voice|'
                      'fieldgroup)$')
 
 field_attr_type_regexp = (r'^('
@@ -191,6 +192,9 @@ AdminNodeDesc = {
     'description': str,
     'presentation': str,
     'footer': str,
+    'footer_accessibility_declaration': str,
+    'footer_privacy_policy': str,
+    'footer_whistleblowing_policy': str,
     'disclaimer_text': str,
     'rootdomain': hostname_regexp_or_empty,
     'whistleblowing_question': str,
@@ -407,6 +411,9 @@ NodeDesc = {
     'enable_scoring_system': bool,
     'enable_signup': bool,
     'footer': str,
+    'footer_accessibility_declaration': str,
+    'footer_privacy_policy': str,
+    'footer_whistleblowing_policy': str,
     'header_title_homepage': str,
     'https_whistleblower': bool,
     'languages_enabled': [str],
@@ -541,10 +548,10 @@ SignupDesc = {
     'role': alphanumeric_str_regexp,
     'phone': numeric_str_regexp,
     'email': email_regexp,
-    'organization_name': alphanumeric_str_regexp,
+    'organization_name': str,
     'organization_tax_code': alphanumeric_str_regexp,
     'organization_vat_code': alphanumeric_str_regexp,
-    'organization_location': alphanumeric_str_regexp,
+    'organization_location': str,
     'tos1': bool,
     'tos2': bool
 }

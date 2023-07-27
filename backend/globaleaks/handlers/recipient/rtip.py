@@ -72,7 +72,6 @@ def db_grant_tip_access(session, tid, user_id, user_cc, itip, rtip, receiver_id)
 
     if existing:
         return
-    print("after Existing1")
     new_receiver = db_get(session,
                           models.User,
                           models.User.id == receiver_id)
@@ -80,7 +79,6 @@ def db_grant_tip_access(session, tid, user_id, user_cc, itip, rtip, receiver_id)
     if itip.crypto_tip_pub_key and not new_receiver.crypto_pub_key:
         # Access to encrypted submissions could be granted only if the recipient has performed first login
         return
-    print("after Existing2")
     _tip_key = b''
     if itip.crypto_tip_pub_key:
         _tip_key = GCE.asymmetric_decrypt(user_cc, base64.b64decode(rtip.crypto_tip_prv_key))
@@ -88,7 +86,6 @@ def db_grant_tip_access(session, tid, user_id, user_cc, itip, rtip, receiver_id)
 
     new_rtip = db_create_receivertip(session, new_receiver, itip, _tip_key)
     new_rtip.new = False
-    print("after Existing3")
     if itip.deprecated_crypto_files_pub_key:
         _files_key = GCE.asymmetric_decrypt(user_cc, base64.b64decode(rtip.deprecated_crypto_files_prv_key))
         new_rtip.deprecated_crypto_files_prv_key = GCE.asymmetric_encrypt(new_receiver.crypto_pub_key, _files_key)
@@ -119,10 +116,8 @@ def db_revoke_tip_access(session, tid, user_id, itip, receiver_id):
     rtip = session.query(models.ReceiverTip) \
                   .filter(models.ReceiverTip.internaltip_id == itip.id,
                           models.ReceiverTip.receiver_id == receiver_id).one_or_none()
-    print("after Existing4")
     if rtip is None:
         return
-    print("after Existing5")
     session.delete(rtip)
 
 

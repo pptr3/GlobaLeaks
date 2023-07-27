@@ -910,55 +910,6 @@ factory("Utils", ["$rootScope", "$http", "$q", "$location", "$filter", "$timeout
       }
     },
 
-    getUploadsNumber: function(uploads) {
-      var count = 0;
-
-      for (var key in uploads) {
-        if (uploads[key] && uploads[key].files) {
-          count += uploads[key].files.length;
-        }
-      }
-
-      return count;
-    },
-
-    getUploadStatus: function(uploads) {
-      for (var key in uploads) {
-        if (uploads[key] &&
-            uploads[key].progress &&
-            uploads[key].progress() !== 1) {
-          return "uploading";
-        }
-      }
-
-      return "finished";
-    },
-
-    getUploadStatusPercentage: function(uploads) {
-      var n = 0;
-      var percentage = 0;
-      for (var key in uploads) {
-        if (uploads[key] && uploads[key].progress) {
-          n += 1;
-          percentage += uploads[key].progress();
-        }
-      }
-
-      return (percentage / n) * 100;
-    },
-
-    getRemainingUploadTime: function(uploads) {
-      var count = 0;
-
-      for (var key in uploads) {
-        if (uploads[key] && uploads[key].timeRemaining) {
-          count += uploads[key].timeRemaining();
-        }
-      }
-
-      return count;
-    },
-
     isUploading: function(uploads) {
       for (var key in uploads) {
         if (uploads[key] &&
@@ -1074,6 +1025,12 @@ factory("Utils", ["$rootScope", "$http", "$q", "$location", "$filter", "$timeout
       };
     },
 
+    load: function(url) {
+      return new TokenResource().$get().then(function(token) {
+        return url + "?token=" + token.id + ":" + token.answer;
+      });
+    },
+
     download: function(url) {
       return new TokenResource().$get().then(function(token) {
         $window.open(url + "?token=" + token.id + ":" + token.answer);
@@ -1174,7 +1131,7 @@ factory("Utils", ["$rootScope", "$http", "$q", "$location", "$filter", "$timeout
 
     copyToClipboard: function(data) {
       if ($window.navigator.clipboard && $window.isSecureContext) {
-        $window.navigator.clipboard.writeText(data);
+        return $window.navigator.clipboard.writeText(data);
       }
     },
 
@@ -1563,7 +1520,7 @@ factory("fieldUtilities", ["$filter", "$http", "CONSTANTS", function($filter, $h
                   }
                 }
               }
-            } else if (field.type === "fileupload") {
+            } else if (["fileupload", "voice"].indexOf(field.type) > -1) {
               entry.required_status = field.required && (!scope.uploads[field.id] || !scope.uploads[field.id].files.length);
             } else {
               entry.required_status = field.required && !entry["value"];
