@@ -94,6 +94,7 @@ def serialize_ifile(session, ifile):
         'name': ifile.name,
         'size': ifile.size,
         'type': ifile.content_type,
+        'reference_id': ifile.reference_id
     }
 
 
@@ -106,18 +107,14 @@ def serialize_rfile(session, ifile, rfile):
     :param rfile: The rfile to be serialized
     :return: The serialized rfile
     """
-    if rfile.filename:
-        filename = rfile.filename
-    else:
-        filename = rfile.internalfile_id
-
     return {
         'id': rfile.id,
+        'ifile_id': ifile.id,
         'creation_date': ifile.creation_date,
         'name': ifile.name,
         'size': ifile.size,
         'type': ifile.content_type,
-        'filename': filename
+        'reference_id': ifile.reference_id
     }
 
 
@@ -135,7 +132,8 @@ def serialize_wbfile(session, wbfile):
         'name': wbfile.name,
         'size': wbfile.size,
         'type': wbfile.content_type,
-        'description': wbfile.description
+        'description': wbfile.description,
+        'visibility': wbfile.visibility
     }
 
 
@@ -178,6 +176,7 @@ def serialize_itip(session, internaltip, language):
 
     for itd in session.query(models.InternalTipData).filter(models.InternalTipData.internaltip_id == internaltip.id):
         ret['data'][itd.key] = itd.value
+        ret['data'][itd.key + "_date"] = itd.creation_date
 
     return ret
 

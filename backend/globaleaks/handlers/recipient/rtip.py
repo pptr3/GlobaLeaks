@@ -290,6 +290,8 @@ def register_wbfile_on_db(session, tid, user_id, rtip_id, uploaded_file):
     new_file.content_type = uploaded_file['type']
     new_file.size = uploaded_file['size']
     new_file.internaltip_id = itip.id
+    new_file.visibility = uploaded_file['visibility']
+    
 
     session.add(new_file)
 
@@ -555,7 +557,7 @@ def create_identityaccessrequest(session, tid, user_id, user_cc, rtip_id, reques
 
 
 @transact
-def create_comment(session, tid, user_id, rtip_id, content):
+def create_comment(session, tid, user_id, rtip_id, content, visibility):
     """
     Transaction for registering a new comment
     :param session: An ORM session
@@ -579,6 +581,7 @@ def create_comment(session, tid, user_id, rtip_id, content):
     comment.type = 'receiver'
     comment.author_id = rtip.receiver_id
     comment.content = _content
+    comment.visibility = visibility
     session.add(comment)
     session.flush()
 
@@ -623,7 +626,9 @@ class RTipInstance(OperationHandler):
           'postpone': RTipInstance.postpone_expiration,
           'set_reminder': RTipInstance.set_reminder,
           'set': RTipInstance.set_tip_val,
-          'update_status': RTipInstance.update_submission_status
+          'update_status': RTipInstance.update_submission_status,
+          'transfer': RTipInstance.transfer_tip
+
         }
 
     def set_tip_val(self, req_args, rtip_id, *args, **kwargs):
@@ -659,6 +664,8 @@ class RTipInstance(OperationHandler):
         Remove the Internaltip and all the associated data
         """
         return delete_rtip(self.request.tid, self.session.user_id, rtip_id)
+    
+
 
 
 class RTipCommentCollection(BaseHandler):
@@ -669,7 +676,6 @@ class RTipCommentCollection(BaseHandler):
 
     def post(self, rtip_id):
         request = self.validate_request(self.request.content.read(), requests.CommentDesc)
-
         return create_comment(self.request.tid, self.session.user_id, rtip_id, request['content'], request['visibility'])
 
 
@@ -682,9 +688,9 @@ class ReceiverFileDownload(BaseHandler):
 
     @transact
     def download_rfile(self, session, tid, user_id, file_id):
-        rfile, ifile, rtip, pgp_key = db_get(session,
-                                             (models.ReceiverFile,
-                                              models.InternalFile,
+        ifile, rfile, rtip, pgp_key = db_get(session,
+                                             (models.InternalFile,
+                                              models.ReceiverFile,
                                               models.ReceiverTip,
                                               models.User.pgp_key_public),
                                              (models.ReceiverTip.receiver_id == models.User.id,
@@ -699,18 +705,16 @@ class ReceiverFileDownload(BaseHandler):
         log.debug("Download of file %s by receiver %s" %
                   (rfile.internalfile_id, rtip.receiver_id))
 
-        if rfile.filename:
-            filename = rfile.filename
-        else:
-            filename = rfile.internalfile_id
-
-        return ifile.name, filename, rtip.crypto_tip_prv_key, rtip.deprecated_crypto_files_prv_key, pgp_key
+        return ifile.name, ifile.id, rfile.id, rtip.crypto_tip_prv_key, rtip.deprecated_crypto_files_prv_key, pgp_key
 
     @inlineCallbacks
     def get(self, rfile_id):
-        name, filename, tip_prv_key, tip_prv_key2, pgp_key = yield self.download_rfile(self.request.tid, self.session.user_id, rfile_id)
+        name, ifile_id, rfile_id, tip_prv_key, tip_prv_key2, pgp_key = yield self.download_rfile(self.request.tid, self.session.user_id, rfile_id)
 
-        filelocation = os.path.join(self.state.settings.attachments_path, filename)
+        filelocation = os.path.join(self.state.settings.attachments_path, rfile_id)
+        if not os.path.exists(filelocation):
+            filelocation = os.path.join(self.state.settings.attachments_path, ifile_id)
+
         directory_traversal_check(self.state.settings.attachments_path, filelocation)
         self.check_file_presence(filelocation)
 
@@ -774,6 +778,10 @@ class RTipWBFileHandler(BaseHandler):
     @inlineCallbacks
     def get(self, wbfile_id):
         name, filename, tip_prv_key, pgp_key = yield self.download_wbfile(self.request.tid, self.session.user_id, wbfile_id)
+
+        filelocation = os.path.join(self.state.settings.attachments_path, filename)
+        if not os.path.exists(filelocation):
+            filelocation = os.path.join(self.state.settings.attachments_path, filename)
 
         filelocation = os.path.join(self.state.settings.attachments_path, filename)
         directory_traversal_check(self.state.settings.attachments_path, filelocation)

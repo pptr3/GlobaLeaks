@@ -148,8 +148,6 @@ def disable_2fa(session, tid, user_id):
 
     user.two_factor_secret = ''
 
-<<<<<<< HEAD
-=======
 @transact
 def accepted_privacy_policy(session, tid, user_id):
     """
@@ -162,7 +160,6 @@ def accepted_privacy_policy(session, tid, user_id):
     user = db_get_user(session, tid, user_id)
     user.accepted_privacy_policy = datetime_now()
 
->>>>>>> 2303d2fd4 (Fase 1)
 
 class UserOperationHandler(OperationHandler):
     check_roles = 'user'
@@ -196,6 +193,7 @@ class UserOperationHandler(OperationHandler):
     def disable_2fa(self, req_args, *args, **kwargs):
         return disable_2fa(self.session.user_tid,
                            self.session.user_id)
+    
     def accepted_privacy_policy(self, req_args, *args, **kwargs):
         return accepted_privacy_policy(self.session.user_tid,
                            self.session.user_id)
